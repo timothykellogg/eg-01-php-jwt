@@ -1,6 +1,9 @@
 .idea
 .vscode
 
+composer.*
+installer
+config.ini
 # CakePHP 3
 
 /vendor/*
