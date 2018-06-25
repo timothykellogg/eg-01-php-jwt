@@ -4,7 +4,6 @@ require_once 'vendor/autoload.php';
 use \Firebase\JWT\JWT;
 include_once 'ds_config.php';
 include_once 'ds_helper.php';
-include_once 'custom_api_client.php';
 class ExampleBase {
 
    private $token;
