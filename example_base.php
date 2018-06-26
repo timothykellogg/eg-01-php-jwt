@@ -75,12 +75,14 @@ class ExampleBase {
             throw new Exception("\n\nUnexpected error: {$json->{'error'}}\n\n");
         }
 
+        self::$access_token = $json->{'access_token'};
+        self::$expires_in = $json->{'expires_in'};
+
         $config = self::$apiClient->getConfig();
-        $config->setHost("https://demo.docusign.net/restapi");
-        $config->setAccessToken($json->{'access_token'});
-        self::$access_token = $config->getAccessToken();
-        $a = self::$access_token;
-        $config->addDefaultHeader('Authorization' , "Bearer {$a}");
+        $config->setAccessToken(self::$access_token);
+        $config->addDefaultHeader('Authorization' , "Bearer {self::$access_token}");
+
+        # Do this later, after getUserInfo: $config->setHost("https://demo.docusign.net/restapi");
     }
 
     private function getUserInfo(){
