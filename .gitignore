@@ -1,11 +1,12 @@
 .idea
 .vscode
 
-composer.*
+composer.lock
 installer
 config.ini
-# CakePHP 3
 
+# CakePHP 3
+/downloaded_documents
 /vendor/*
 /config/app.php
 
