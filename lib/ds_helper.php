@@ -3,7 +3,8 @@
 class DSHelper {
 
     public static function readContent($file_name) {
-        $filename = $file_name;
+
+        $filename = realpath($file_name);
         $handle = fopen($filename, "rb");
         $fsize = filesize($filename);
         $contents = fread($handle, $fsize);

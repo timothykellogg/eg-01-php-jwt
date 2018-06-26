@@ -1,5 +1,4 @@
 <?php
-    require_once('vendor/docusign/esign-client/autoload.php');
     include_once 'example_base.php';
     /**
      *
@@ -11,7 +10,7 @@
         /**
          *
          */
-        public function list(){
+        public function list() {
             $this->validateToken();
             $envelopeApi = new DocuSign\eSign\Api\EnvelopesApi(self::$apiClient);
 

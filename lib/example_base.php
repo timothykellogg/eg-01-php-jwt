@@ -1,8 +1,5 @@
 <?php
-require_once('vendor/docusign/esign-client/autoload.php');
-require_once 'vendor/autoload.php';
 use \Firebase\JWT\JWT;
-include_once 'ds_config.php';
 include_once 'ds_helper.php';
 class ExampleBase {
 
@@ -28,8 +25,7 @@ class ExampleBase {
     }
     private function updateToken(){
         $this->authToken = $this->configureJwtAuthorizationFlowByKey();
-        $a = $this->getUserInfo();
-        self::$accountID = $a->{'account_id'};
+        self::$accountID = $this->getUserInfo()->{'account_id'};
     }
     /**
      *
@@ -80,8 +76,8 @@ class ExampleBase {
 
         $config = self::$apiClient->getConfig();
         $config->setAccessToken(self::$access_token);
-        $config->addDefaultHeader('Authorization' , "Bearer {self::$access_token}");
-
+        $config->addDefaultHeader('Authorization' , "Bearer ".self::$access_token);
+        $config->setHost("https://demo.docusign.net/restapi");
         # Do this later, after getUserInfo: $config->setHost("https://demo.docusign.net/restapi");
     }
 
@@ -91,14 +87,7 @@ class ExampleBase {
         $user_info_url="https://{$aud}/oauth/userinfo";
         $headers = array('Accept' => 'application/json', 'Authorization' => "Bearer {$access_token}");
         $response = Unirest\Request::get($user_info_url, $headers);
-        //TODO: replace with callApi
-        // $response = self::$apiClient->callApi(
-        //     $user_info_url,
-        //     "GET",
-        //     null,
-        //     null,
-        //     $headers
-        // );
+
         $json = $response->body;
         $target = DSConfig::target_account_id();
         $accounts = $json->{'accounts'};

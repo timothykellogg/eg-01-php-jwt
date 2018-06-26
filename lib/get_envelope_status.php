@@ -1,5 +1,4 @@
 <?php
-    require_once('vendor/docusign/esign-client/autoload.php');
     include_once 'example_base.php';
 
     class GetEnvelopeStatus extends ExampleBase {

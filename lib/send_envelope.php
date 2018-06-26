@@ -1,5 +1,4 @@
 <?php
-require_once('vendor/docusign/esign-client/autoload.php');
 include_once 'example_base.php';
 
 class SendEnvelope extends ExampleBase {
@@ -52,9 +51,9 @@ class SendEnvelope extends ExampleBase {
         $envelopeDefinition->setEmailSubject("Please sign this document sent from PHP SDK");
         $doc1 = $this->createDocumentFromTemplate("1", "Order acknowledgement","html", self::ENVELOPE_1_DOCUMENT_1());
         $doc2 = $this->createDocumentFromTemplate("2","Battle Plan","docx",
-                DSHelper::readContent(join(DIRECTORY_SEPARATOR,array(self::DEMO_DIR, self::DOC_2_DOCX))));
+                DSHelper::readContent(join(DIRECTORY_SEPARATOR,array(getcwd(), self::DEMO_DIR, self::DOC_2_DOCX))));
         $doc3 = $this->createDocumentFromTemplate("3","Lorem Ipsum","pdf",
-                DSHelper::readContent(join(DIRECTORY_SEPARATOR,array(self::DEMO_DIR,self::DOC_3_PDF))));
+                DSHelper::readContent(join(DIRECTORY_SEPARATOR,array(getcwd(), self::DEMO_DIR,self::DOC_3_PDF))));
         // The order in the docs array determines the order in the envelope
         $envelopeDefinition->setDocuments(array($doc1, $doc2, $doc3));
         // create a signer recipient to sign the document, identified by name and email
