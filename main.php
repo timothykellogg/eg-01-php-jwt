@@ -1,16 +1,14 @@
 <?php
+    require_once('vendor/autoload.php');
     require_once('vendor/docusign/esign-client/autoload.php');
     include_once 'ds_config.php';
-    include_once 'example_base.php';
-    include_once 'send_envelope.php';
-    include_once 'list_envelopes.php';
-    include_once 'get_envelope_status.php';
-    include_once 'list_envelope_recipients.php';
-    include_once 'get_envelope_documents.php';
+    include_once 'lib/example_base.php';
+    include_once 'lib/send_envelope.php';
+    include_once 'lib/list_envelopes.php';
+    include_once 'lib/get_envelope_status.php';
+    include_once 'lib/list_envelope_recipients.php';
+    include_once 'lib/get_envelope_documents.php';
 
-    new DSConfig();
-
-    // $host = "https://demo.docusign.net/restapi";
     $config = new DocuSign\eSign\Configuration();
     $apiClient = new DocuSign\eSign\ApiClient($config);
 
