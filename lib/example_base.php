@@ -37,11 +37,10 @@ class ExampleBase {
             self::$account = $this->getUserInfo();
         }
 
-        print(self::$account->{'base_uri'});
         self::$accountID = self::$account->{'account_id'};
         self::$base_uri = self::$account->{'base_uri'}."/restapi";
         $config = self::$apiClient->getConfig();
-        $config->setHost(self::base_uri);
+        $config->setHost(self::$base_uri);
         self::$expiresIn = 1000 * (time() + ExampleBase::TOKEN_EXPIRATION_IN_SECONDS);
     }
     /**
@@ -94,8 +93,6 @@ class ExampleBase {
         $config = self::$apiClient->getConfig();
         $config->setAccessToken(self::$access_token);
         $config->addDefaultHeader('Authorization' , "Bearer ".self::$access_token);
-        $config->setHost("https://demo.docusign.net/restapi");
-        # Do this later, after getUserInfo: $config->setHost("https://demo.docusign.net/restapi");
     }
 
     private function getUserInfo(){
