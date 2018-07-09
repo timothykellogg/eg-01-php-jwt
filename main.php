@@ -5,10 +5,6 @@
     include_once 'lib/example_base.php';
     include_once 'lib/send_envelope.php';
     include_once 'lib/list_envelopes.php';
-    include_once 'lib/get_envelope_status.php';
-    include_once 'lib/list_envelope_recipients.php';
-    include_once 'lib/get_envelope_documents.php';
-
     $config = new DocuSign\eSign\Configuration();
     $apiClient = new DocuSign\eSign\ApiClient($config);
 
