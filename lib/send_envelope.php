@@ -39,8 +39,8 @@ class SendEnvelope extends ExampleBase {
     }
 
     public function send() {
-        $envelope = $this->createEnvelope();
         $this->checkToken();
+        $envelope = $this->createEnvelope();
         $envelopeApi = new DocuSign\eSign\Api\EnvelopesApi(self::$apiClient);
         $results = $envelopeApi->createEnvelope(self::$accountID, $envelope);
         return $results;
