@@ -14,6 +14,8 @@ class ExampleBase {
    protected static $access_token;
    protected static $expiresIn;
    protected static $accountID;
+   protected static $base_uri;
+   protected static $account;
    protected static $apiClient;
 
    public function __construct($client) {
@@ -22,19 +24,25 @@ class ExampleBase {
 
     protected function checkToken() {
         $milliseconds = time() * 1000;
-        print("\n$milliseconds");
-        print("\n".self::$expiresIn);
-        if(is_null(self::$access_token) || $milliseconds > self::$expiresIn){
+        if(is_null(self::$access_token)
+            || ($milliseconds +  ExampleBase::TOKEN_REPLACEMENT_IN_MILLISECONDS) > self::$expiresIn) {
             $this->updateToken();
         }
     }
 
     private function updateToken(){
         $this->authToken = $this->configureJwtAuthorizationFlowByKey();
-        self::$accountID = $this->getUserInfo()->{'account_id'};
 
-        self::$expiresIn = (time() * 1000) + (ExampleBase::TOKEN_EXPIRATION_IN_SECONDS * 1000) - ExampleBase::TOKEN_REPLACEMENT_IN_MILLISECONDS;
-        print("expires: ".self::$expiresIn);
+        if(is_null(self::$account)) {
+            self::$account = $this->getUserInfo();
+        }
+
+        print(self::$account->{'base_uri'});
+        self::$accountID = self::$account->{'account_id'};
+        self::$base_uri = self::$account->{'base_uri'}."/restapi";
+        $config = self::$apiClient->getConfig();
+        $config->setHost(self::base_uri);
+        self::$expiresIn = 1000 * (time() + ExampleBase::TOKEN_EXPIRATION_IN_SECONDS);
     }
     /**
      *
