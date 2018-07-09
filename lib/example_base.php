@@ -3,7 +3,8 @@ use \Firebase\JWT\JWT;
 include_once 'ds_helper.php';
 class ExampleBase {
 
-   private $token;
+   const TOKEN_EXPIRATION_IN_SECONDS = 3600;
+   const TOKEN_REPLACEMENT_IN_MILLISECONDS = 10*60*1000;
    private $exp = 3600;
 
    private $permission_scopes="signature%20impersonation";
@@ -11,6 +12,7 @@ class ExampleBase {
 
    protected static $expires_in;
    protected static $access_token;
+   protected static $expiresIn;
    protected static $accountID;
    protected static $apiClient;
 
@@ -18,14 +20,21 @@ class ExampleBase {
        self::$apiClient = $client;
     }
 
-    protected function validateToken() {
-        if(is_null($token)){
+    protected function checkToken() {
+        $milliseconds = time() * 1000;
+        print("\n$milliseconds");
+        print("\n".self::$expiresIn);
+        if(is_null(self::$access_token) || $milliseconds > self::$expiresIn){
             $this->updateToken();
         }
     }
+
     private function updateToken(){
         $this->authToken = $this->configureJwtAuthorizationFlowByKey();
         self::$accountID = $this->getUserInfo()->{'account_id'};
+
+        self::$expiresIn = (time() * 1000) + (ExampleBase::TOKEN_EXPIRATION_IN_SECONDS * 1000) - ExampleBase::TOKEN_REPLACEMENT_IN_MILLISECONDS;
+        print("expires: ".self::$expiresIn);
     }
     /**
      *

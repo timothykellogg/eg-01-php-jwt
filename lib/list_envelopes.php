@@ -11,7 +11,7 @@
          *
          */
         public function list() {
-            $this->validateToken();
+            $this->checkToken();
             $envelopeApi = new DocuSign\eSign\Api\EnvelopesApi(self::$apiClient);
 
             $options = new DocuSign\eSign\Api\EnvelopesApi\ListStatusChangesOptions();
