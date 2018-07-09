@@ -8,7 +8,7 @@
     $config = new DocuSign\eSign\Configuration();
     $apiClient = new DocuSign\eSign\ApiClient($config);
 
-    print("\nSending and envelope...\n");
+    print("\nSending an envelope...\n");
     $sendHandler = new SendEnvelope($apiClient);
     $result = $sendHandler->send();
 
@@ -16,7 +16,7 @@
 
     print("\nList envelopes in the account...");
     $listEnvelopesHandler= new ListEnvelopes($apiClient);
-    $listEnvelopesHandler->list();
-
+    $envelopes = $listEnvelopesHandler->list();
+    //TODO: print the first 2 envelope like java,C# (how many there are )
     print("\nDone.")
     ?>
