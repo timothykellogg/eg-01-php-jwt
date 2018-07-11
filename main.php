@@ -16,7 +16,15 @@
 
     print("\nList envelopes in the account...");
     $listEnvelopesHandler= new ListEnvelopes($apiClient);
-    $envelopes = $listEnvelopesHandler->list();
     //TODO: print the first 2 envelope like java,C# (how many there are )
+    $envelopesList = $listEnvelopesHandler->list();
+    $envelopes = $envelopesList->getEnvelopes();
+
+    if(!is_null($envelopesList)  && count($envelopes) > 2) {
+        printf("\nResults for %d envelopes were returned. Showing the first two:", count($envelopes));
+        $envelopesList->setEnvelopes(array($envelopes[0],$envelopes[1]));
+    }
+
+    DSHelper::printPrettyJSON($envelopesList);
     print("\nDone.")
     ?>
