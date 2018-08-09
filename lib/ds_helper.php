@@ -45,5 +45,3 @@ class DSHelper {
         return $length === 0 || (substr($haystack, -$length) === $needle);
     }
 }
-
-?>

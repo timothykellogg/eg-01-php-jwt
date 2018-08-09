@@ -10,7 +10,7 @@
         /**
          *
          */
-        public function list() {
+        public function listEnvelopes() {
             $this->checkToken();
             $envelopeApi = new DocuSign\eSign\Api\EnvelopesApi(self::$apiClient);
 
@@ -21,4 +21,3 @@
             return $envelopeApi->listStatusChanges(self::$accountID, $options);
         }
     }
-?>

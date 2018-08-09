@@ -3,16 +3,17 @@ use \Firebase\JWT\JWT;
 include_once 'ds_helper.php';
 class ExampleBase {
 
-   const TOKEN_EXPIRATION_IN_SECONDS = 3600;
-   const TOKEN_REPLACEMENT_IN_MILLISECONDS = 10*60*1000;
+   const TOKEN_EXPIRATION_IN_SECONDS = 3600; # 1 hour
+   const TOKEN_REPLACEMENT_IN_SECONDS = 600; # 10 minutes
+
    private $exp = 3600;
 
    private $permission_scopes="signature%20impersonation";
-   private $redirect_uri ="https://docusign.com";
+   private $redirect_uri ="https://www.docusign.com";
 
    protected static $expires_in;
    protected static $access_token;
-   protected static $expiresIn;
+   protected static $expiresInTimestamp;
    protected static $accountID;
    protected static $base_uri;
    protected static $account;
@@ -23,15 +24,15 @@ class ExampleBase {
     }
 
     protected function checkToken() {
-        $milliseconds = time() * 1000;
         if(is_null(self::$access_token)
-            || ($milliseconds +  ExampleBase::TOKEN_REPLACEMENT_IN_MILLISECONDS) > self::$expiresIn) {
+                || (time() +  ExampleBase::TOKEN_REPLACEMENT_IN_SECONDS) > self::$expiresInTimestamp) {
             $this->updateToken();
         }
     }
 
     private function updateToken(){
         $this->authToken = $this->configureJwtAuthorizationFlowByKey();
+        self::$expiresInTimestamp = time() + self::$expires_in;
 
         if(is_null(self::$account)) {
             self::$account = $this->getUserInfo();
@@ -41,7 +42,6 @@ class ExampleBase {
         self::$base_uri = self::$account->{'base_uri'}."/restapi";
         $config = self::$apiClient->getConfig();
         $config->setHost(self::$base_uri);
-        self::$expiresIn = 1000 * (time() + ExampleBase::TOKEN_EXPIRATION_IN_SECONDS);
     }
     /**
      *
@@ -64,11 +64,12 @@ class ExampleBase {
 
         $jwt  = JWT::encode($_token, $private_key, 'RS256');
 
-        // printf ("Requesting an access token by using a JWT token...");
+        printf ("Requesting an access token via the JWT flow...");
         $headers = array('Accept' => 'application/json');
         $data = array('grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer', 'assertion' => $jwt);
         $body = Unirest\Request\Body::form($data);
         $response = Unirest\Request::post("https://{$aud}/oauth/token", $headers, $body);
+        printf ("done. Continuing...");
         // Handle the response if it is an html page
         if (strpos($response->raw_body, '<html>') !== false) {
             throw new Exception("An error response was received!\n\n");
@@ -80,7 +81,9 @@ class ExampleBase {
             throw new Exception("\n\nC O N S E N T   R E Q U I R E D\n"
             ."Ask the user who will be impersonated to run the following url:\n"
             ."    {$consent_url}\n"
-            ."It will ask the user to login and to approve access by your application.\n\n");
+            ."It will ask the user to login and to approve access by your application.\n\n"
+            ."Alternatively, an Administrator can use Organization Administration to\n"
+            ."pre-approve one or more users.\n\n", 401);
         }
 
         if (property_exists ($json, 'error') or !property_exists ($json, 'access_token')){
@@ -113,13 +116,13 @@ class ExampleBase {
                 }
             }
         }
-
+         
+        # Looking for a specific user account
         foreach($account as $acct){
             if($acct->{'account_id'} === $target){
                 return $acct;
             }
         }
+        throw new Exception("\n\nUser does not have access to account {$target}\n\n");
     }
 }
-
-?>

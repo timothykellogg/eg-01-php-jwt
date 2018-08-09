@@ -147,5 +147,3 @@ class SendEnvelope extends ExampleBase {
         return $recipients;
     }
 }
-
-?>
