@@ -49,10 +49,12 @@ environment variables:
    (After creating it from the `ds_config_EXAMPLE.ini` file.)
    More information for the configuration settings is below.
 *  Or via **environment variables:** export the needed
-   environment variables. The file .env lists the variables.
+   environment variables. The file `.env` lists the variables.
 
-`ds_config.ini` are in the .gitignore file so your
+`ds_config.ini` is in the .gitignore file so your
 private information will not be added to your repository.
+Do not store your Integration Key, private key, or other
+private information in your code repository.
 
 #### Creating the Integration Key
 Your DocuSign Integration Key must be configured for a JWT OAuth authentication flow:
