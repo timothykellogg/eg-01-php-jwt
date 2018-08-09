@@ -11,15 +11,6 @@
             return self::$instance;
         }
 
-        private static function loadFromEnv() {
-            $clientId = getenv("DS_CLIENT_ID");
-            
-            if (!is_null($clientId) and !empty($clientId)) {
-                return $_ENV;
-            }
-            return null;
-        }
-
         public function __construct() {
             date_default_timezone_set('UTC');
 
