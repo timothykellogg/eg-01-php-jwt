@@ -7,21 +7,26 @@ class SendEnvelope extends ExampleBase {
     const DOC_3_PDF = "World_Wide_Corp_lorem.pdf";
 
     private static function ENVELOPE_1_DOCUMENT_1() {
+        $signer_name = DSConfig::signer_name();
+        $signer_email = DSConfig::signer_email();
+        $cc_name = DSConfig::cc_name();
+        $cc_email = DSConfig::cc_email();
+
         return "<!DOCTYPE html>
             <html>
                 <head>
-                  <meta charset=\"UTF-8\">
+                  <meta charset='UTF-8'>
                 </head>
-                <body style=\"font-family:sans-serif;margin-left:2em;\">
-                <h1 style=\"font-family: 'Trebuchet MS', Helvetica, sans-serif;
-                     color: darkblue;margin-bottom: 0;\">World Wide Corp</h1>
-                <h2 style=\"font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                <body style='font-family:sans-serif;margin-left:2em;'>
+                <h1 style='font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                     color: darkblue;margin-bottom: 0;'>World Wide Corp</h1>
+                <h2 style='font-family: 'Trebuchet MS', Helvetica, sans-serif;
                      margin-top: 0px;margin-bottom: 3.5em;font-size: 1em;
-                     color: darkblue;\">Order Processing Division</h2>
-              <h4>Ordered by ".DSConfig::signer_name() ."</h4>
-                <p style=\"margin-top:0em; margin-bottom:0em;\">Email: ".DSConfig::signer_email()."</p>
-                <p style=\"margin-top:0em; margin-bottom:0em;\">Copy to: ".DSConfig::cc_name().", ".DSConfig::signer_email()."</p>
-                <p style=\"margin-top:3em;\">
+                     color: darkblue;'>Order Processing Division</h2>
+              <h4>Ordered by {$signer_name}</h4>
+                <p style='margin-top:0em; margin-bottom:0em;'>Email: {$signer_email}</p>
+                <p style='margin-top:0em; margin-bottom:0em;'>Copy to: {$cc_name}, {$cc_email}</p>
+                <p style='margin-top:3em;'>
               Candy bonbon pastry jujubes lollipop wafer biscuit biscuit. Topping brownie sesame snaps
              sweet roll pie. Croissant danish biscuit soufflé caramels jujubes jelly. Dragée danish caramels lemon
              drops dragée. Gummi bears cupcake biscuit tiramisu sugar plum pastry.
@@ -29,7 +34,7 @@ class SendEnvelope extends ExampleBase {
              cake gummies lollipop sugar plum ice cream gummies cheesecake.
                 </p>
                 <!-- Note the anchor tag for the signature field is in white. -->
-                <h3 style=\"margin-top:3em;\">Agreed: <span style=\"color:white;\">**signature_1**/</span></h3>
+                <h3 style='margin-top:3em;'>Agreed: <span style='color:white;'>**signature_1**/</span></h3>
                 </body>
             </html>";
     }
