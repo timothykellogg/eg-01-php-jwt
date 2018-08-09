@@ -20,7 +20,7 @@
                 $this->config["DS_IMPERSONATED_USER_GUID"] = getenv("DS_IMPERSONATED_USER_GUID");
                 $this->config["DS_TARGET_ACCOUNT_ID"] = getenv("DS_TARGET_ACCOUNT_ID");
                 $this->config["DS_SIGNER_1_EMAIL"] = getenv("DS_SIGNER_1_EMAIL");
-                $this->config["DS_SIGNER_1_NAME"] = getenv("DS_IMPERSONATED_UDS_SIGNER_1_NAMESER_GUID");
+                $this->config["DS_SIGNER_1_NAME"] = getenv("DS_SIGNER_1_NAME");
                 $this->config["DS_CC_1_EMAIL"] = getenv("DS_CC_1_EMAIL");
                 $this->config["DS_CC_1_NAME"] = getenv("DS_CC_1_NAME");
                 $this->config["DS_PRIVATE_KEY_FILE"] = getenv("DS_PRIVATE_KEY_FILE");
