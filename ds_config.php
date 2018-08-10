@@ -17,19 +17,25 @@
             $clientId = getenv("DS_CLIENT_ID");
             if (!is_null($clientId) and !empty($clientId)) {
                 $this->config["DS_CLIENT_ID"] = $clientId;
+                $this->config["DS_AUTH_SERVER"] = getenv("DS_AUTH_SERVER");
                 $this->config["DS_IMPERSONATED_USER_GUID"] = getenv("DS_IMPERSONATED_USER_GUID");
                 $this->config["DS_TARGET_ACCOUNT_ID"] = getenv("DS_TARGET_ACCOUNT_ID");
                 $this->config["DS_SIGNER_1_EMAIL"] = getenv("DS_SIGNER_1_EMAIL");
                 $this->config["DS_SIGNER_1_NAME"] = getenv("DS_SIGNER_1_NAME");
                 $this->config["DS_CC_1_EMAIL"] = getenv("DS_CC_1_EMAIL");
                 $this->config["DS_CC_1_NAME"] = getenv("DS_CC_1_NAME");
-                $this->config["DS_PRIVATE_KEY_FILE"] = getenv("DS_PRIVATE_KEY_FILE");
                 $this->config["DS_PRIVATE_KEY"] = getenv("DS_PRIVATE_KEY");
             } else {
                 $this->config = parse_ini_file('ds_config.ini', true);
             }
         }
 
+        private function _auth_server() {
+            return $this->config["DS_AUTH_SERVER"];
+        }
+        public static  function auth_server() {
+            return self::getInstance()->_auth_server();
+        }
         private function _client_id() {
             return $this->config["DS_CLIENT_ID"];
         }
@@ -47,9 +53,6 @@
         }
         public static  function target_account_id(){
             return self::getInstance()->_target_account_id();
-        }
-        public static  function oauth_redirect_uri(){
-            return "https://www.docusign.com";
         }
         private function _signer_email() {
             return $this->config["DS_SIGNER_1_EMAIL"];
@@ -75,29 +78,24 @@
         public static function cc_name(){
             return self::getInstance()->_cc_name();
         }
-        private function _private_key_file(){
-            return $this->config["DS_PRIVATE_KEY_FILE"];
-        }
-        public static function private_key_file(){
-            return self::getInstance()->_private_key_file();
-        }
         private function _private_key() {
             return $this->config["DS_PRIVATE_KEY"];
         }
         public static function private_key(){
             return self::getInstance()->_private_key();
         }
-        public static function authentication_url() {
-            return "https://account-d.docusign.com";
-        }
         public static function aud() {
-            return "account-d.docusign.com";
+            $auth_server = self::getInstance()->_auth_server();
+
+            if (strpos($auth_server, 'https://') !== false) {
+                $aud = substr($auth_server, 8);
+            } else { # assuming http://blah
+                $aud = substr($auth_server, 7);
+            }
+            return $aud;
         }
         public static function api() {
             return "restapi/v2";
-        }
-        public static function permission_scopes() {
-            return "signature impersonation";
         }
         public static function jwt_scope() {
              return "signature";

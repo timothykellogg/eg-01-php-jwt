@@ -61,7 +61,6 @@ class ExampleBase {
         );
 
         $private_key = DSConfig::private_key();
-
         $jwt  = JWT::encode($_token, $private_key, 'RS256');
 
         printf ("Requesting an access token via the JWT flow...");
@@ -69,7 +68,6 @@ class ExampleBase {
         $data = array('grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer', 'assertion' => $jwt);
         $body = Unirest\Request\Body::form($data);
         $response = Unirest\Request::post("https://{$aud}/oauth/token", $headers, $body);
-        printf ("done. Continuing...");
         // Handle the response if it is an html page
         if (strpos($response->raw_body, '<html>') !== false) {
             throw new Exception("An error response was received!\n\n");
@@ -90,6 +88,7 @@ class ExampleBase {
             throw new Exception("\n\nUnexpected error: {$json->{'error'}}\n\n");
         }
 
+        printf ("done. Continuing...");
         self::$access_token = $json->{'access_token'};
         self::$expires_in = $json->{'expires_in'};
 
