@@ -12,15 +12,16 @@ class SendEnvelope extends ExampleBase {
         $cc_name = DSConfig::cc_name();
         $cc_email = DSConfig::cc_email();
 
-        return "<!DOCTYPE html>
+        return <<<HTML
+        <!DOCTYPE html>
             <html>
                 <head>
                   <meta charset='UTF-8'>
                 </head>
                 <body style='font-family:sans-serif;margin-left:2em;'>
-                <h1 style='font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                <h1 style='font-family: "Trebuchet MS", Helvetica, sans-serif;
                      color: darkblue;margin-bottom: 0;'>World Wide Corp</h1>
-                <h2 style='font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                <h2 style='font-family: "Trebuchet MS", Helvetica, sans-serif;
                      margin-top: 0px;margin-bottom: 3.5em;font-size: 1em;
                      color: darkblue;'>Order Processing Division</h2>
               <h4>Ordered by {$signer_name}</h4>
@@ -36,7 +37,8 @@ class SendEnvelope extends ExampleBase {
                 <!-- Note the anchor tag for the signature field is in white. -->
                 <h3 style='margin-top:3em;'>Agreed: <span style='color:white;'>**signature_1**/</span></h3>
                 </body>
-            </html>";
+            </html>
+HTML;
     }
 
     public function __construct($client) {
