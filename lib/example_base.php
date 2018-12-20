@@ -57,7 +57,7 @@ class ExampleBase {
             "aud" => $aud,
             "scope" => DSConfig::jwt_scope(),
             "nbf" => $current_time,
-            "exp" => $current_time + $exp*1000
+            "exp" => $current_time + 60*1000
         );
 
         $private_key = DSConfig::private_key();

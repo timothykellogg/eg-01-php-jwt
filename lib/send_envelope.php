@@ -6,7 +6,7 @@ class SendEnvelope extends ExampleBase {
     const DOC_2_DOCX = "World_Wide_Corp_Battle_Plan_Trafalgar.docx";
     const DOC_3_PDF = "World_Wide_Corp_lorem.pdf";
 
-    private static function ENVELOPE_1_DOCUMENT_1() {
+    private static function DOCUMENT_1() {
         $signer_name = DSConfig::signer_name();
         $signer_email = DSConfig::signer_email();
         $cc_name = DSConfig::cc_name();
@@ -50,26 +50,27 @@ HTML;
         $envelope = new DocuSign\eSign\Model\EnvelopeDefinition();
         $envelope->setEmailSubject("Please sign this document sent from PHP SDK");
         $doc1 = new DocuSign\eSign\Model\Document();
-        $doc1->setDocumentBase64(base64_encode(self::ENVELOPE_1_DOCUMENT_1()));
+        $doc1->setDocumentBase64(base64_encode(self::DOCUMENT_1()));
         $doc1->setName("Order acknowledgement");
         $doc1->setFileExtension("html");
         $doc1->setDocumentId("1");
-
         $doc2 = new DocuSign\eSign\Model\Document();
-        $doc2->setDocumentBase64(DSHelper::readContent(join(DIRECTORY_SEPARATOR,array(getcwd(), self::DEMO_DIR,
-            self::DOC_2_DOCX))));
+        $doc2->setDocumentBase64(base64_encode(DSHelper::readContent(
+            join(DIRECTORY_SEPARATOR,array(getcwd(), self::DEMO_DIR,
+            self::DOC_2_DOCX)))));
         $doc2->setName("Battle Plan");
         $doc2->setFileExtension("docx");
         $doc2->setDocumentId("2");
-
         $doc3 = new DocuSign\eSign\Model\Document();
-        $doc3->setDocumentBase64(DSHelper::readContent(join(DIRECTORY_SEPARATOR,array(getcwd(), self::DEMO_DIR,
-            self::DOC_3_PDF))));
+        $doc3->setDocumentBase64(base64_encode(DSHelper::readContent(
+          join(DIRECTORY_SEPARATOR,array(getcwd(), self::DEMO_DIR,
+            self::DOC_3_PDF)))));
         $doc3->setName("Lorem Ipsum");
         $doc3->setFileExtension("pdf");
         $doc3->setDocumentId("3");
         // The order in the docs array determines the order in the envelope
         $envelope->setDocuments(array($doc1, $doc2, $doc3));
+
         // create a signer recipient to sign the document, identified by name and email
         // We're setting the parameters via the object creation
         $signer1 = new DocuSign\eSign\Model\Signer();
@@ -111,7 +112,6 @@ HTML;
         $tabs->setSignHereTabs(array($signHere1, $signHere2));
         $signer1->setTabs($tabs);
         // Add the recipients to the envelope object
-//        $recipients = $this->createRecipients($signer1, $cc1);
         $recipients = new DocuSign\eSign\Model\Recipients();
         $recipients->setSigners(array($signer1));
         $recipients->setCarbonCopies(array($cc1));
