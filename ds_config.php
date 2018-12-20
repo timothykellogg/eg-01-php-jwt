@@ -20,10 +20,10 @@
                 $this->config["DS_AUTH_SERVER"] = getenv("DS_AUTH_SERVER");
                 $this->config["DS_IMPERSONATED_USER_GUID"] = getenv("DS_IMPERSONATED_USER_GUID");
                 $this->config["DS_TARGET_ACCOUNT_ID"] = getenv("DS_TARGET_ACCOUNT_ID");
-                $this->config["DS_SIGNER_1_EMAIL"] = getenv("DS_SIGNER_1_EMAIL");
-                $this->config["DS_SIGNER_1_NAME"] = getenv("DS_SIGNER_1_NAME");
-                $this->config["DS_CC_1_EMAIL"] = getenv("DS_CC_1_EMAIL");
-                $this->config["DS_CC_1_NAME"] = getenv("DS_CC_1_NAME");
+                $this->config["SIGNER_EMAIL"] = getenv("SIGNER_EMAIL");
+                $this->config["SIGNER_NAME"] = getenv("SIGNER_NAME");
+                $this->config["CC_EMAIL"] = getenv("CC_EMAIL");
+                $this->config["CC_NAME"] = getenv("CC_NAME");
                 $this->config["DS_PRIVATE_KEY"] = getenv("DS_PRIVATE_KEY");
             } else {
                 $this->config = parse_ini_file('ds_config.ini', true);
@@ -55,25 +55,25 @@
             return self::getInstance()->_target_account_id();
         }
         private function _signer_email() {
-            return $this->config["DS_SIGNER_1_EMAIL"];
+            return $this->config["SIGNER_EMAIL"];
         }
         public static  function signer_email(){
             return self::getInstance()->_signer_email();
         }
         private function _signer_name(){
-            return $this->config["DS_SIGNER_1_NAME"];
+            return $this->config["SIGNER_NAME"];
         }
         public static  function signer_name(){
             return self::getInstance()->_signer_name();
         }
         private function _cc_email() {
-            return $this->config["DS_CC_1_EMAIL"];
+            return $this->config["CC_EMAIL"];
         }
         public static function cc_email(){
             return self::getInstance()->_cc_email();
         }
         private function _cc_name(){
-            return $this->config["DS_CC_1_NAME"];
+            return $this->config["CC_NAME"];
         }
         public static function cc_name(){
             return self::getInstance()->_cc_name();
