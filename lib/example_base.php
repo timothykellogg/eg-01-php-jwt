@@ -1,6 +1,5 @@
 <?php
 use \Firebase\JWT\JWT;
-include_once 'ds_helper.php';
 class ExampleBase {
 
    const TOKEN_EXPIRATION_IN_SECONDS = 3600; # 1 hour

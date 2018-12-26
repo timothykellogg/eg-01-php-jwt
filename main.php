@@ -26,7 +26,10 @@
         } else {
             printf("\nResults for %d envelopes were returned:\n", count($envelopes));
         }
-        print_r ($envelopesList);
+        # $envelopesList is an object that implements ArrayAccess. Convert to a regular array:
+        $results = json_decode((string)$envelopesList, true);
+        # pretty print it:
+        print (json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     } catch (Exception $e) {
         print ("\n\nException!\n");
         print ($e->getMessage());

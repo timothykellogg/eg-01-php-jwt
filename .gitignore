@@ -4,7 +4,6 @@
 
 composer.lock
 installer
-config.ini
 .1.env
 
 # CakePHP 3
