@@ -1,11 +1,9 @@
-ds_config.ini
 
 .idea
 .vscode
 
 composer.lock
 installer
-config.ini
 .1.env
 
 # CakePHP 3

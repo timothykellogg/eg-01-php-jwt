@@ -13,17 +13,18 @@ Repository: [eg-01-php-jwt](https://github.com/docusign/eg-01-php-jwt)
 
 ## Introduction
 
-This software is an example of a **System Integration**.
-This type of application interacts with DocuSign on its
-own. There is no user interface and no user is present
-during normal operation.
+This code example acts as a **System Integration**.
 
 The application uses the OAuth JWT grant flow to impersonate
 a user in the account.
 
-This launcher example includes two examples:
+This type of application interacts with DocuSign on its
+own. There is no user interface and no user is present
+during normal operation.
+
+This launcher example includes two workflow examples:
 1. Send an html, Word, and PDF file in an envelope to be signed.
-1. List the envelopes in the account that are less than 30 days old.
+1. List the envelopes in the account whose status has changed in the last 30 days old.
 
 ## Installation
 
@@ -34,35 +35,34 @@ Download or clone this repository. Then:
 ````
 cd eg-01-php-jwt
 composer install
-
-# Create the config file
-cp ds_config_EXAMPLE.ini ds_config.ini
 ````
+Then configure the ds_config.ini config file.
 
 ### Configure the example's settings
 
-You can configure the example either via an .ini file or via
-environment variables:
-
-*  **ds_config.ini:** Edit the `ds_config.ini` file in the root
-   directory.
-   (After creating it from the `ds_config_EXAMPLE.ini` file.)
-   More information for the configuration settings is below.
-*  Or via **environment variables:** export the needed
-   environment variables. The file `.env` lists the variables.
-
-`ds_config.ini` is in the .gitignore file so your
-private information will not be added to your repository.
-Do not store your Integration Key, private key, or other
-private information in your code repository.
+Configuring the ds_config.ini file:
 
 #### Creating the Integration Key
 Your DocuSign Integration Key must be configured for a JWT OAuth authentication flow:
 * Create a public/private key pair for the key. Store the private key
   in a secure location. You can use a file or a key vault.
 * The example requires the private key. Store the private key in the
-  `ds_config.ini` file or in the environment variable
-  `DS_PRIVATE_KEY`.
+  `ds_config.ini` file.
+  
+  In the ds_config.ini file, add the private key, including the 
+  BEGIN / END lines with a pair of quotation marks. Example:
+
+````  
+DS_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAkbz3bi31zrH2ry4p8S4ncPoMdkUyu+MG46m9BalOKzWNNAvW
+1LVs5ftlXxzA6V0m6nx895w8S761/qZ8xtAAl99DezRn/3CueeBUyw+tvlmEBu1C
+....
+UC1WqwKBgQCY/6aZxlWX9XYgsQsnUjhj2aTwr7pCiQuYceIzLTQzy+nz8M4PfCE1
+rjRsm6YTpoxh7nuW2qnFfMA58UPs9tonN/z1pr9mKfwmamtPXeMSJeEZUVmh7mNx
+PEHgznlGh/vUboCuA4tQOcKytxFfKG4F+jM/g4GH9z46KZOow3Hb6g==
+-----END RSA PRIVATE KEY-----"  
+````  
+  
 * If you will be using individual permission grants, you must create a
   `Redirect URI` for the key. Any URL can be used. By default, this
   example uses `https://www.docusign.com`

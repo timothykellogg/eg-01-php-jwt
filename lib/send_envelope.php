@@ -6,7 +6,7 @@ class SendEnvelope extends ExampleBase {
     const DOC_2_DOCX = "World_Wide_Corp_Battle_Plan_Trafalgar.docx";
     const DOC_3_PDF = "World_Wide_Corp_lorem.pdf";
 
-    private static function ENVELOPE_1_DOCUMENT_1() {
+    private static function DOCUMENT_1() {
         $signer_name = DSConfig::signer_name();
         $signer_email = DSConfig::signer_email();
         $cc_name = DSConfig::cc_name();
@@ -47,110 +47,95 @@ HTML;
 
     public function send() {
         $this->checkToken();
-        $envelope = $this->createEnvelope();
+
+        # document 1 (html) has sign here anchor tag **signature_1**
+        # document 2 (docx) has sign here anchor tag /sn1/
+        # document 3 (pdf)  has sign here anchor tag /sn1/
+        #
+        # The envelope has two recipients.
+        # recipient 1 - signer
+        # recipient 2 - cc
+        # The envelope will be sent first to the signer.
+        # After it is signed, a copy is sent to the cc person.
+        #
+        # create the envelope definition
+        $envelope_definition = new \DocuSign\eSign\Model\EnvelopeDefinition([
+            'email_subject' => 'Please sign this document set'
+        ]);
+
+        $signer_name = DSConfig::signer_name();
+        $signer_email = DSConfig::signer_email();
+        $cc_name = DSConfig::cc_name();
+        $cc_email = DSConfig::cc_email();
+
+        $doc1_b64 = base64_encode(self::DOCUMENT_1());
+        # read files 2 and 3 from a local directory
+        # The reads could raise an exception if the file is not available!
+        $demo_docs_path = getcwd() . '/' . self::DEMO_DIR . '/';
+        $content_bytes = file_get_contents($demo_docs_path . self::DOC_2_DOCX);
+        $doc2_b64 = base64_encode($content_bytes);
+        $content_bytes = file_get_contents($demo_docs_path . self::DOC_3_PDF);
+        $doc3_b64 = base64_encode($content_bytes);
+        # Create the document models
+        $document1 = new \DocuSign\eSign\Model\Document([  # create the DocuSign document object
+            'document_base64' => $doc1_b64,
+            'name' => 'Order acknowledgement',  # can be different from actual file name
+            'file_extension' => 'html',  # many different document types are accepted
+            'document_id' => '1'  # a label used to reference the doc
+        ]);
+        $document2 = new \DocuSign\eSign\Model\Document([  # create the DocuSign document object
+            'document_base64' => $doc2_b64,
+            'name' => 'Battle Plan',  # can be different from actual file name
+            'file_extension' => 'docx',  # many different document types are accepted
+            'document_id' => '2'  # a label used to reference the doc
+        ]);
+        $document3 = new \DocuSign\eSign\Model\Document([  # create the DocuSign document object
+            'document_base64' => $doc3_b64,
+            'name' => 'Lorem Ipsum',  # can be different from actual file name
+            'file_extension' => 'pdf',  # many different document types are accepted
+            'document_id' => '3'  # a label used to reference the doc
+        ]);
+        # The order in the docs array determines the order in the envelope
+        $envelope_definition->setDocuments([$document1, $document2, $document3]);
+        # Create the signer recipient model
+        $signer1 = new \DocuSign\eSign\Model\Signer([
+            'email' => $signer_email, 'name' => $signer_name,
+            'recipient_id' => "1", 'routing_order' => "1"]);
+        # routingOrder (lower means earlier) determines the order of deliveries
+        # to the recipients. Parallel routing order is supported by using the
+        # same integer as the order for two or more recipients.
+        # create a cc recipient to receive a copy of the documents
+        $cc1 = new \DocuSign\eSign\Model\CarbonCopy([
+            'email' => $cc_email, 'name' => $cc_name,
+            'recipient_id' => "2", 'routing_order' => "2"]);
+        # Create signHere fields (also known as tabs) on the documents,
+        # We're using anchor (autoPlace) positioning
+        #
+        # The DocuSign platform searches throughout your envelope's
+        # documents for matching anchor strings. So the
+        # signHere2 tab will be used in both document 2 and 3 since they
+        #  use the same anchor string for their "signer 1" tabs.
+        $sign_here1 = new \DocuSign\eSign\Model\SignHere([
+            'anchor_string' => '**signature_1**', 'anchor_units' => 'pixels',
+            'anchor_y_offset' => '10', 'anchor_x_offset' => '20']);
+        $sign_here2 = new \DocuSign\eSign\Model\SignHere([
+            'anchor_string' => '/sn1/', 'anchor_units' =>  'pixels',
+            'anchor_y_offset' => '10', 'anchor_x_offset' => '20']);
+        # Add the tabs model (including the sign_here tabs) to the signer
+        # The Tabs object wants arrays of the different field/tab types
+        $signer1->setTabs(new \DocuSign\eSign\Model\Tabs([
+            'sign_here_tabs' => [$sign_here1, $sign_here2]]));
+        # Add the recipients to the envelope object
+        $recipients = new \DocuSign\eSign\Model\Recipients([
+            'signers' => [$signer1], 'carbon_copies' => [$cc1]]);
+        $envelope_definition->setRecipients($recipients);
+        # Request that the envelope be sent by setting |status| to "sent".
+        # To request that the envelope be created as a draft, set to "created"
+        $envelope_definition->setStatus("sent");
+
         $envelopeApi = new DocuSign\eSign\Api\EnvelopesApi(self::$apiClient);
-        $results = $envelopeApi->createEnvelope(self::$accountID, $envelope);
+        $results = $envelopeApi->createEnvelope(self::$accountID, $envelope_definition);
+
         return $results;
-    }
-
-    private function createEnvelope(){
-        $envelopeDefinition = new DocuSign\eSign\Model\EnvelopeDefinition();
-        $envelopeDefinition->setEmailSubject("Please sign this document sent from PHP SDK");
-        $doc1 = $this->createDocumentFromTemplate("1", "Order acknowledgement","html", self::ENVELOPE_1_DOCUMENT_1());
-        $doc2 = $this->createDocumentFromTemplate("2","Battle Plan","docx",
-                DSHelper::readContent(join(DIRECTORY_SEPARATOR,array(getcwd(), self::DEMO_DIR, self::DOC_2_DOCX))));
-        $doc3 = $this->createDocumentFromTemplate("3","Lorem Ipsum","pdf",
-                DSHelper::readContent(join(DIRECTORY_SEPARATOR,array(getcwd(), self::DEMO_DIR,self::DOC_3_PDF))));
-        // The order in the docs array determines the order in the envelope
-        $envelopeDefinition->setDocuments(array($doc1, $doc2, $doc3));
-        // create a signer recipient to sign the document, identified by name and email
-        // We're setting the parameters via the object creation
-        $signer1 = $this->createSigner();
-        // routingOrder (lower means earlier) determines the order of deliveries
-        // to the recipients. Parallel routing order is supported by using the
-        // same integer as the order for two or more recipients.
-
-        // create a cc recipient to receive a copy of the documents, identified by name and email
-        // We're setting the parameters via setters
-        $cc1 = $this->createCarbonCopy();
-        // Create signHere fields (also known as tabs) on the documents,
-        // We're using anchor (autoPlace) positioning
-        //
-        // The DocuSign platform seaches throughout your envelope's
-        // documents for matching anchor strings. So the
-        // sign_here_2 tab will be used in both document 2 and 3 since they
-        // use the same anchor string for their "signer 1" tabs.
-        $signHere1 = $this->createSignHere("**signature_1**","pixels", "20","10");
-        $signHere2 = $this->createSignHere("/sn1/","pixels", "20","10");
-        // Tabs are set per recipient / signer
-        $this->setSignerTabs($signer1, $signHere1, $signHere2);
-        // Add the recipients to the envelope object
-        $recipients = $this->createRecipients($signer1, $cc1);
-        $envelopeDefinition->setRecipients($recipients);
-        // Request that the envelope be sent by setting |status| to "sent".
-        // To request that the envelope be created as a draft, set to "created"
-        $envelopeDefinition->setStatus("sent");
-
-        return $envelopeDefinition;
-    }
-
-    private function createDocumentFromTemplate($id, $name, $fileExtension, $content) {
-        $document = new DocuSign\eSign\Model\Document();
-
-        // $str=implode(array_map("chr", $content));
-        $base64Content = base64_encode($content);
-        // print($base64Content);
-        $document->setDocumentBase64($base64Content);
-        // can be different from actual file name
-        $document->setName($name);
-        // Source data format. Signed docs are always pdf.
-        $document->setFileExtension($fileExtension);
-        // a label used to reference the doc
-        $document->setDocumentId($id);
-
-        return $document;
-    }
-
-    private function createSigner(){
-        $signer = new DocuSign\eSign\Model\Signer();
-        $signer->setEmail(DSConfig::signer_email());
-        $signer->setName(DSConfig::signer_name());
-        $signer->setRecipientId("1");
-        $signer->setRoutingOrder("1");
-        return $signer;
-    }
-
-    private function createCarbonCopy(){
-        $cc = new DocuSign\eSign\Model\CarbonCopy();
-        $cc->setEmail(DSConfig::cc_email());
-        $cc->setName(DSConfig::cc_name());
-        $cc->setRoutingOrder("2");
-        $cc->setRecipientId("2");
-        return $cc;
-    }
-
-    private function createSignHere($anchorPattern, $anchorUnits, $anchorXOffset, $anchorYOffset) {
-        $signHere = new DocuSign\eSign\Model\SignHere();
-        $signHere->setAnchorString($anchorPattern);
-        $signHere->setAnchorUnits($anchorUnits);
-        $signHere->setAnchorXOffset($anchorXOffset);
-        $signHere->setAnchorYOffset($anchorYOffset);
-        return $signHere;
-    }
-
-    private function setSignerTabs() {
-        $signer =  func_get_arg(0);
-        $tabs = new DocuSign\eSign\Model\Tabs();
-        $tabs->setSignHereTabs(array(func_get_arg(1), func_get_arg(2)));
-        $signer->setTabs($tabs);
-    }
-
-    private function createRecipients($signer, $cc) {
-
-        $recipients = new DocuSign\eSign\Model\Recipients();
-        $recipients->setSigners(array($signer));
-        $recipients->setCarbonCopies(array($cc));
-
-        return $recipients;
     }
 }

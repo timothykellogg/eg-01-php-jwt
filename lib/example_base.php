@@ -1,6 +1,5 @@
 <?php
 use \Firebase\JWT\JWT;
-include_once 'ds_helper.php';
 class ExampleBase {
 
    const TOKEN_EXPIRATION_IN_SECONDS = 3600; # 1 hour
@@ -57,7 +56,7 @@ class ExampleBase {
             "aud" => $aud,
             "scope" => DSConfig::jwt_scope(),
             "nbf" => $current_time,
-            "exp" => $current_time + $exp*1000
+            "exp" => $current_time + 60*1000
         );
 
         $private_key = DSConfig::private_key();
